@@ -1,6 +1,7 @@
 package com.packt.hotelbook.stepDef;
 
 import com.packt.hotelbook.pageObject.BookingPageObject;
+import com.packt.hotelbook.utilis.Log;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -12,6 +13,7 @@ public class BookingSteps {
     WebDriver driver = Cucumberhooks.driver;
     String iFirstName, iLastName,iPrice,iCheckInDate,iCheckOutDate;
     Boolean iDepositPaid;
+    public int bookingCount;
 
     String URL  = Cucumberhooks.URL;
 
@@ -54,17 +56,29 @@ public class BookingSteps {
     @Given("^I have Booking$")
     public void i_have_Booking() throws Throwable {
         client_has_Hotel_booking_page();
-
+        BookingPageObject bookPO = new BookingPageObject(driver);
+        bookingCount = bookPO.getCurrentBookingCount();
+        Log.info("BookingCount before delete "+bookingCount);
     }
 
     @When("^I click the delete button for that booking$")
-    public void i_click_the_delete_button_for_that_booking() throws Throwable {
+    public void i_click_the_delete_button_for_that_booking() {
         BookingPageObject bookPO = new BookingPageObject(driver);
         new BookingPageObject(driver).clickDelete();
+
      }
 
     @Then("^the booking is deleted$")
     public void the_booking_is_deleted() {
+        try{
+            BookingPageObject bookPO = new BookingPageObject(driver);
+            Assert.assertEquals(bookingCount-1,bookPO.getCurrentBookingCount());
+            Log.info("BookingCount after delete "+bookPO.getCurrentBookingCount());
+        }
+        catch(Exception e)
+        {
+            Assert.fail("Booking is not deleted correctly ");
+        }
 
     }
 }

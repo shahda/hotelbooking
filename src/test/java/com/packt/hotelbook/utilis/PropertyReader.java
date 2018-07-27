@@ -1,5 +1,7 @@
 package com.packt.hotelbook.utilis;
 
+import com.packt.hotelbook.stepDef.Cucumberhooks;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,9 +9,9 @@ import java.util.Properties;
 
 public class PropertyReader {
 
-    Properties properties = new Properties();
+    private Properties properties = new Properties();
 
-    InputStream inputStream = null;
+    private InputStream inputStream = null;
 
     public PropertyReader() {
         loadProperties();
@@ -19,7 +21,9 @@ public class PropertyReader {
     private void loadProperties() {
 
         try {
-            inputStream = new FileInputStream("src/com.packt.hotelbook.utilis/config.properties");
+
+            String propertiespath = Cucumberhooks.projectdirectory + "\\src\\test\\java\\com\\packt\\hotelbook\\utilis\\config.properties" ;
+            inputStream = new FileInputStream(propertiespath);
             properties.load(inputStream);
 
         } catch (IOException e) {

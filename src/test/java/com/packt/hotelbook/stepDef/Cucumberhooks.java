@@ -6,6 +6,7 @@ import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.xml.DOMConfigurator;
 import org.junit.Assert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -23,23 +24,27 @@ import java.util.concurrent.TimeUnit;
 public class Cucumberhooks {
 
     public static WebDriver driver;
-    public static String browser = "internet explorer";
+    public static String browser ;
+    public static String projectdirectory ;
     public static String URL ="http://hotel-test.equalexperts.io/";
     String Path;
 
 
     public Cucumberhooks() {
         driver = null;
-//        PropertyReader envproperties  = new PropertyReader();
-//        browser = envproperties.reaadProperty("browser");
-//        URL= envproperties.reaadProperty("URL");
-//       Log.info("The browser is "+browser);
-//        Log.info("The URL is" +URL);
+        DOMConfigurator.configure("log4j.xml");
+        projectdirectory = System.getProperty("user.dir");
+        Log.info("The project root dir is"+projectdirectory );
+        PropertyReader envproperties  = new PropertyReader();
+        browser = envproperties.reaadProperty("browser");
+        URL= envproperties.reaadProperty("URL");
+        Log.info("The browser is "+browser);
+        Log.info("The URL is" +URL);
 
         }
 
     @Before
-    public void beforeScenario (Scenario s) throws Exception {
+    public void beforeScenario (Scenario s) {
             String sScenarioName = s.getName();
             Log.info("The scenario name is " +sScenarioName);
           if(driver == null) {
@@ -57,12 +62,11 @@ public class Cucumberhooks {
 
 
     @After
-    public void afterScenario (Scenario scenario) throws Exception
-    {
+    public void afterScenario (Scenario scenario) {
         try {
             boolean ScenarioStatus = scenario.isFailed();
             if (ScenarioStatus) {
-                Log.info("Scenario is failed");
+                Log.info("Scenario is failed" +scenario.getName());
                 if (driver != null) {
                     driver.quit();
                     driver = null;
@@ -94,37 +98,33 @@ public class Cucumberhooks {
 
             if (browser.equalsIgnoreCase("chrome"))
             {
-                Path = "D:\\hotelbooking\\Browsers\\chrome\\win\\chromedriver.exe";
+                Path = projectdirectory + "\\Browsers\\chrome\\win\\chromedriver.exe";
+                System.setProperty("webdriver.chrome.driver", Path);
                 driver = new ChromeDriver();
                 Log.info("Driver selected is " +browser);
             }
-            else if (browser.equalsIgnoreCase("internet explorer"))
+            else if (browser.equalsIgnoreCase("ie"))
             {
-                Path = "D:\\hotelbooking\\Browsers\\ie\\win\\IEDriverServer.exe";
+               Path = projectdirectory + "\\Browsers\\ie\\win\\IEDriverServer.exe";
                 System.setProperty("webdriver.ie.driver", Path);
                 driver = new InternetExplorerDriver();
                 Log.info("Driver selected is " +browser);
             }
             else if (browser.equalsIgnoreCase("firefox"))
             {
-                Path = "D:\\hotelbooking\\Browsers\\firefox\\win\\geckodriver.exe";
+                Path = projectdirectory + "\\Browsers\\firefox\\win\\geckodriver.exe";
                 System.setProperty("webdriver.gecko.driver", Path);
                 driver = new FirefoxDriver();
                 Log.info("Driver selected is " +browser);
             }
         }
-        catch (AssertionError e)
+        catch (Exception e)
         {
             driver = null;
-            Log.info("URL or browser is not correct, Please correct URL or browser");
+            Log.info("browser is not initiliaze, Please correct URL or browser");
             Assert.fail();
         }
-        catch(Exception e){
-            driver = null;
-            e.printStackTrace();
-            Log.info("There is issue in Initializing the browser");
-            Assert.fail();
-        }
+
     }
 
 }

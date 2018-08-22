@@ -8,4 +8,4 @@ Then Booking is completed
 
 Examples:
 |FirstName||LastName||Price||DepositPaid||CheckInDate||CheckOutDate|
-|John||Thomas||355||false||2018-08-03||2018-08-10|
+|John||Travolta||356||false||2018-08-23||2018-08-24|
